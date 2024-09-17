@@ -52,3 +52,50 @@ exports.getKeyword = async (req, res) => {
     return res.json({ error: error });
   }
 };
+
+// Get all keywords
+exports.getAllKeywords = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const existingKeywords = await Keywords.find({ user: id });
+    if (!existingKeywords) {
+      return res.json({ error: "No keywords found" }).status(404);
+    }
+    return res.json({ result: existingKeywords });
+  } catch (error) {
+    console.log({ error: error });
+    return res.json({ error: error });
+  }
+};
+
+// Delete Keyword
+exports.deleteKeyword = async (req, res) => {
+  try {
+    const { id, keyword_name } = req.body;
+    if (!id) {
+      return res.json({ error: "id field is required" }).status(400);
+    }
+    if (!keyword_name) {
+      return res.json({ error: "keyword_name field is required" }).status(400);
+    }
+
+    const exisitngUser = await User.findById(id);
+    console.log(exisitngUser);
+    if (!exisitngUser) {
+      return res.json({ error: "User not found" }).status(404);
+    }
+    const existingKeyword = await Keywords.findOne({
+      user: exisitngUser._id,
+      name: keyword_name,
+    });
+    if (!existingKeyword) {
+      return res.json({ error: "keywod name not found" }).status(404);
+    }
+    await Keywords.findByIdAndDelete(existingKeyword._id);
+
+    return res.json({ message: "keyword successfully deleted" }).status(200);
+  } catch (error) {
+    console.log({ error: error });
+    return res.json({ error: error });
+  }
+};
