@@ -18,6 +18,13 @@ const keywordSchema = new mongoose.Schema({
   },
 });
 
+keywordSchema.pre("remove", async function (next) {
+  // Code to handle cascade-like deletion for related keywords
+  // For example, if you're deleting a User, you can delete related keywords here.
+  await Keywords.deleteMany({ user: this._id });
+  next();
+});
+
 const Keywords = mongoose.model("Keywords", keywordSchema);
 
 module.exports = Keywords;

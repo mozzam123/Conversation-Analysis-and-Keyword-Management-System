@@ -1,5 +1,7 @@
 const User = require("./../models/userModel");
 
+
+// Create User
 exports.createUser = async (req, res) => {
   const { userid, username, password } = req.body;
   const existingUser = await User.findOne({
@@ -38,9 +40,6 @@ exports.createUser = async (req, res) => {
 
   res.status(200).json({ msg: "User Created" });
 };
-
-
-
 
 // Delete User
 exports.deleteUser = async (req, res) => {
