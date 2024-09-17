@@ -8,8 +8,10 @@ const userSchema = new mongoose.Schema({
     maxlength: 15,
   },
   username: {
+
+
     type: String,
-    required: [true, "username field is required"],
+    required: [true,"username field is required"],
     maxlength: 15,
   },
 
@@ -18,8 +20,10 @@ const userSchema = new mongoose.Schema({
     required: [true, "password field is required"],
     maxlength: 10,
   },
-  timestamps: true,
-});
+
+},
+  { timestamps: true }
+);
 
 const User = mongoose.model("User", userSchema);
 
