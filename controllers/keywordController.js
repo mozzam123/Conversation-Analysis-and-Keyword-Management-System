@@ -99,3 +99,35 @@ exports.deleteKeyword = async (req, res) => {
     return res.json({ error: error });
   }
 };
+
+// Update Keyword
+exports.updateKeyword = async (req, res) => {
+  try {
+    const { id, keywords } = req.body;
+    if (!id) {
+      return res.json({ error: "id field is required" }).status(400);
+    }
+
+    if (!keywords) {
+      return res.json({ error: "keywords field is required" }).status(400);
+    }
+    const existingKeyword = await Keywords.findById(id);
+    if (!existingKeyword) {
+      return res.json({ error: "keyword not found" }).status(404);
+    }
+    // Use the proper update syntax with an object
+    await Keywords.findByIdAndUpdate(
+      id,
+      { keywords: keywords },
+      {
+        new: true, // Return the updated document
+        runValidators: true, // Run validators
+      }
+    );
+
+    return res.json({ message: "keyword updated successfully" });
+  } catch (error) {
+    console.log({ error: error });
+    return res.json({ error: error });
+  }
+};
