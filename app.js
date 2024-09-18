@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose")
 const userRoutes = require("./routes/userRoutes")
 const keywordRoutes = require("./routes/keywordRoutes")
+const analysisRoutes = require("./routes/analysisRoutes")
 const app = express();
 
 
@@ -11,6 +12,7 @@ app.use(express.json());
 // Routes
 app.use('/api/user', userRoutes)
 app.use('/api/keyword', keywordRoutes)
+app.use("/api/analysis", analysisRoutes);
 
 
 mongoose
