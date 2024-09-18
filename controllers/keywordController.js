@@ -1,5 +1,8 @@
 const Keywords = require("./../models/keywordModel");
 const User = require("./../models/userModel");
+const { countWords } = require("./../utils");
+const WordCloud = require("node-wordcloud");
+const { createCanvas, loadImage } = require("canvas");
 
 // Add keyword
 exports.addKeyword = async (req, res) => {
@@ -126,6 +129,21 @@ exports.updateKeyword = async (req, res) => {
     );
 
     return res.json({ message: "keyword updated successfully" });
+  } catch (error) {
+    console.log({ error: error });
+    return res.json({ error: error });
+  }
+};
+
+exports.keywordExtraction = async (req, res) => {
+  try {
+    if (!req.body.text) {
+      return res.json({ error: "text field is required" }).status(400);
+    }
+    // 1. Count word occurrences
+    const wordCounts = countWords(req.body.text);
+
+    return res.json({ occurrences: wordCounts });
   } catch (error) {
     console.log({ error: error });
     return res.json({ error: error });
