@@ -1,6 +1,8 @@
 const keywordsModel = require("./models/keywordModel");
 const userModel = require("./models/userModel");
 const Sentiment = require("sentiment");
+const axios = require("axios");
+const qs = require("qs");
 
 // Utility function to count the word occurences
 exports.countWords = (text) => {
@@ -68,22 +70,50 @@ exports.detectKeywords = async (text, keywordList, id) => {
   }
 };
 
-
-exports.analyzeSentiment = (text) => {
+exports.analyzeSentiment = async (text) => {
   const sentiment = new Sentiment();
   const result = sentiment.analyze(text);
-  
+
   let overallSentiment;
   if (result.comparative > 0) {
-    overallSentiment = "Good";
+    overallSentiment = "Positive";
   } else if (result.comparative < 0) {
-    overallSentiment = "Bad";
+    overallSentiment = "Negative";
   } else {
     overallSentiment = "Neutral";
   }
-  
-  console.log("sentiment************", overallSentiment);
+
   return {
     overallSentiment,
   };
 };
+
+
+
+exports.checkGrammar = async (text) => {
+  try {
+    const response = await axios.post(
+      "https://api.languagetool.org/v2/check",
+      qs.stringify({
+        text: text,
+        language: "en",
+      }),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+    console.log('Api response: ', response.data.matches[0].message);
+
+    return response.data.matches[0].message;
+  } catch (error) {
+    console.error("Error:", error.response.data);
+  }
+};
+
+// const sentence =
+//   "The area is good to live  but the shops tubelight are not nearby tb and there is one mart";
+// checkGrammar(sentence).then((matches) => {
+//   console.log("Grammar Suggestions:", matches[0].message);
+// });

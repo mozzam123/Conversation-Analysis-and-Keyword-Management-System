@@ -1,9 +1,13 @@
 const keywordsModel = require("./../models/keywordModel");
 const userModel = require("./../models/userModel");
-const { detectKeywords , analyzeSentiment} = require("./../utils");
+const {
+  detectKeywords,
+  analyzeSentiment,
+  checkGrammar,
+} = require("./../utils");
 
 exports.convoAnalysis = async (req, res) => {
-  allResponses = {}
+  allResponses = {};
   try {
     const { id, text, keyword_detection } = req.body;
     if (!id) {
@@ -23,14 +27,19 @@ exports.convoAnalysis = async (req, res) => {
     if (!keywords) {
       return res.status(400).json({ error: "No keywords found!" });
     }
-    const keyword_detect_response_data = await detectKeywords(text, keyword_detection, id);
-    const sentiment_score =  analyzeSentiment(text)
-  
+    const keyword_detect_response_data = await detectKeywords(
+      text,
+      keyword_detection,
+      id
+    );
+    const sentiment_score = await analyzeSentiment(text);
+    const grammar_suggestion = await checkGrammar(text);
+
     allResponses["keyword_detection"] = keyword_detect_response_data;
     allResponses["sentiment_score"] = sentiment_score;
+    allResponses["grammar_suggestion"] = grammar_suggestion;
 
-
-    return res.json( allResponses );
+    return res.json(allResponses);
   } catch (error) {
     console.log({ error: error });
     return res.json({ error: error });
