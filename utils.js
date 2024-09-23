@@ -88,8 +88,6 @@ exports.analyzeSentiment = async (text) => {
   };
 };
 
-
-
 exports.checkGrammar = async (text) => {
   try {
     const response = await axios.post(
@@ -104,9 +102,11 @@ exports.checkGrammar = async (text) => {
         },
       }
     );
-    console.log('Api response: ', response.data.matches[0].message);
-
-    return response.data.matches[0].message;
+    console.log("Api response: ", response.data.matches.length);
+    if (response.data.matches.length > 0) {
+      return response.data.matches[0].message;
+    }
+    return "No Suggestions!";
   } catch (error) {
     console.error("Error:", error.response.data);
   }
